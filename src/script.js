@@ -27,64 +27,34 @@ function updateTime() {
         let mexicoCityDateElement = mexicoCityElement.querySelector(".date");
         let mexicoCityTimeElement = mexicoCityElement.querySelector(".time");
         let mexicoCityTime = moment().tz("America/Mexico_City");
-
         mexicoCityDateElement.innerHTML = mexicoCityTime.format("MMMM Do YYYY");
         mexicoCityTimeElement.innerHTML = mexicoCityTime.format("h:mm:ss [<small>]A[</small>]");
     }
 }
 
-let cityInterval;
-
 function updateCity(event) {
-    clearInterval(cityInterval); 
     let cityTimeZone = event.target.value;
     if (cityTimeZone === "current") {
         cityTimeZone = moment.tz.guess();
     }
-
-    const cityDetails = {
-        "Africa/Harare": { name: "Harare", flag: "🇿🇼" },
-        "Europe/London": { name: "London", flag: "🇬🇧" },
-        "America/Toronto": { name: "Toronto", flag: "🇨🇦" },
-        "Asia/Tokyo": { name: "Tokyo", flag: "🇯🇵" },
-        "Europe/Paris": { name: "Paris", flag: "🇫🇷" },
-        "Asia/Dubai": { name: "Dubai", flag: "🇦🇪" },
-        "America/Mexico_City": { name: "Mexico City", flag: "🇲🇽" },
-    };
-
-    let cityName, cityFlag;
-
-    if (cityTimeZone === moment.tz.guess()) {
-        let guessedCity = Object.keys(cityDetails).find(zone => zone === cityTimeZone);
-        if (guessedCity) {
-            cityName = cityDetails[guessedCity].name;
-            cityFlag = cityDetails[guessedCity].flag;
-        } else {
-            cityName = "Current Location";
-            cityFlag = "";
-        }
-    } else {
-        cityName = cityDetails[cityTimeZone]?.name || cityTimeZone.replace("_", " ").split("/")[1];
-        cityFlag = cityDetails[cityTimeZone]?.flag || "";
-    }
-
+    let cityName = cityTimeZone.replace("_", " ").split("/")[1];
+    let cityTime = moment().tz(cityTimeZone);
     let citiesElement = document.querySelector("#cities");
-
-    function updateSelectedCityTime() {
-        let cityTime = moment().tz(cityTimeZone);
-        citiesElement.innerHTML = `
-        <div class="city">
-            <div>
-                <h2>${cityName} ${cityFlag}</h2>
-                <div class="date">${cityTime.format("MMMM Do YYYY")}</div>
-            </div>
-            <div class="time">${cityTime.format("h:mm:ss")} <small>${cityTime.format("A")}</small></div>
+    citiesElement.innerHTML = `
+    <div class="city">
+        <div>
+            <h2>${cityName}</h2>
+            <div class="date">${cityTime.format("MMMM Do YYYY")}</div>
         </div>
-        `;
-    }
+        <div class="time">${cityTime.format("h:mm:ss")} <small>${cityTime.format("A")}</small></div>
+    </div>
+    `;
 
-    updateSelectedCityTime();
-    cityInterval = setInterval(updateSelectedCityTime, 1000);
+    setInterval(() => {
+        cityTime = moment().tz(cityTimeZone);
+        citiesElement.querySelector(".date").innerHTML = cityTime.format("MMMM Do YYYY");
+        citiesElement.querySelector(".time").innerHTML = cityTime.format("h:mm:ss [<small>]A[</small>]");
+    }, 1000);
 }
 
 updateTime();
@@ -92,3 +62,9 @@ setInterval(updateTime, 1000);
 
 let citiesSelectElement = document.querySelector("#city");
 citiesSelectElement.addEventListener("change", updateCity);
+
+// Redirect back to main page
+let backButton = document.getElementById("backToMain");
+backButton.addEventListener("click", function() {
+    window.location.href = "index.html"; // Change 'index.html' to your main page's URL
+});
