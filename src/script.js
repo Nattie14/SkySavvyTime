@@ -103,7 +103,7 @@ citiesSelectElement.addEventListener("change", updateCity);
 
 // Button click event to navigate back to the main page
 backButton.addEventListener("click", function() {
-    window.location.href = "index.html"; // Adjust the URL if necessary
+    window.location.href = "index.html"; 
 });
 
 
