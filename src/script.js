@@ -1,5 +1,3 @@
-// JavaScript
-
 function updateTime() {
     // Harare
     let harareElement = document.querySelector("#harare");
@@ -83,16 +81,17 @@ function updateCity(event) {
             <div class="time">${cityTime.format("h:mm:ss")} <small>${cityTime.format("A")}</small></div>
         </div>
         `;
+
+        // Show the button when a city is selected
+        let backButton = document.getElementById("backToMain");
+        backButton.style.display = "block";
+        backButton.addEventListener("click", function() {
+            window.location.href = "index.html"; // Replace with your home page URL
+        });
     }
 
     updateSelectedCityTime();
     cityInterval = setInterval(updateSelectedCityTime, 1000);
-}
-
-// Show button only if not on the home page
-let backButton = document.getElementById("backToMain");
-if (window.location.pathname === "/index.html" || window.location.pathname === "/") {
-    backButton.style.display = "none";
 }
 
 updateTime();
@@ -100,10 +99,3 @@ setInterval(updateTime, 1000);
 
 let citiesSelectElement = document.querySelector("#city");
 citiesSelectElement.addEventListener("change", updateCity);
-
-// Button click event to navigate back to the main page
-backButton.addEventListener("click", function() {
-    window.location.href = "index.html"; 
-});
-
-
