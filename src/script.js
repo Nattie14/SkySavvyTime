@@ -36,7 +36,7 @@ function updateTime() {
 let cityInterval;
 
 function updateCity(event) {
-    clearInterval(cityInterval); // Clear previous interval if any
+    clearInterval(cityInterval); 
     let cityTimeZone = event.target.value;
     if (cityTimeZone === "current") {
         cityTimeZone = moment.tz.guess();
@@ -82,11 +82,11 @@ function updateCity(event) {
         </div>
         `;
 
-        // Show the button when a city is selected
+    
         let backButton = document.getElementById("backToMain");
         backButton.style.display = "block";
         backButton.addEventListener("click", function() {
-            window.location.href = "index.html"; // Replace with your home page URL
+            window.location.href = "index.html"; 
         });
     }
 
