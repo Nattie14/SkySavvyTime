@@ -37,13 +37,15 @@ function updateCity(event) {
     if (cityTimeZone === "current") {
         cityTimeZone = moment.tz.guess();
     }
+
     let cityName = cityTimeZone.replace("_", " ").split("/")[1];
+    let flag = getFlagEmoji(cityTimeZone);
     let cityTime = moment().tz(cityTimeZone);
     let citiesElement = document.querySelector("#cities");
     citiesElement.innerHTML = `
     <div class="city">
         <div>
-            <h2>${cityName}</h2>
+            <h2>${cityName} ${flag}</h2>
             <div class="date">${cityTime.format("MMMM Do YYYY")}</div>
         </div>
         <div class="time">${cityTime.format("h:mm:ss")} <small>${cityTime.format("A")}</small></div>
@@ -55,6 +57,19 @@ function updateCity(event) {
         citiesElement.querySelector(".date").innerHTML = cityTime.format("MMMM Do YYYY");
         citiesElement.querySelector(".time").innerHTML = cityTime.format("h:mm:ss [<small>]A[</small>]");
     }, 1000);
+}
+
+function getFlagEmoji(timezone) {
+    const flags = {
+        "Africa/Harare": "🇿🇼",
+        "Europe/London": "🇬🇧",
+        "America/Mexico_City": "🇲🇽",
+        "America/Toronto": "🇨🇦",
+        "Asia/Tokyo": "🇯🇵",
+        "Europe/Paris": "🇫🇷",
+        "Asia/Dubai": "🇦🇪"
+    };
+    return flags[timezone] || "";
 }
 
 updateTime();
