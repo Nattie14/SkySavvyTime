@@ -1,3 +1,5 @@
+// JavaScript
+
 function updateTime() {
     // Harare
     let harareElement = document.querySelector("#harare");
@@ -27,49 +29,70 @@ function updateTime() {
         let mexicoCityDateElement = mexicoCityElement.querySelector(".date");
         let mexicoCityTimeElement = mexicoCityElement.querySelector(".time");
         let mexicoCityTime = moment().tz("America/Mexico_City");
+
         mexicoCityDateElement.innerHTML = mexicoCityTime.format("MMMM Do YYYY");
         mexicoCityTimeElement.innerHTML = mexicoCityTime.format("h:mm:ss [<small>]A[</small>]");
     }
 }
 
+let cityInterval;
+
 function updateCity(event) {
+    clearInterval(cityInterval); // Clear previous interval if any
     let cityTimeZone = event.target.value;
     if (cityTimeZone === "current") {
         cityTimeZone = moment.tz.guess();
     }
 
-    let cityName = cityTimeZone.replace("_", " ").split("/")[1];
-    let flag = getFlagEmoji(cityTimeZone);
-    let cityTime = moment().tz(cityTimeZone);
-    let citiesElement = document.querySelector("#cities");
-    citiesElement.innerHTML = `
-    <div class="city">
-        <div>
-            <h2>${cityName} ${flag}</h2>
-            <div class="date">${cityTime.format("MMMM Do YYYY")}</div>
-        </div>
-        <div class="time">${cityTime.format("h:mm:ss")} <small>${cityTime.format("A")}</small></div>
-    </div>
-    `;
+    const cityDetails = {
+        "Africa/Harare": { name: "Harare", flag: "🇿🇼" },
+        "Europe/London": { name: "London", flag: "🇬🇧" },
+        "America/Toronto": { name: "Toronto", flag: "🇨🇦" },
+        "Asia/Tokyo": { name: "Tokyo", flag: "🇯🇵" },
+        "Europe/Paris": { name: "Paris", flag: "🇫🇷" },
+        "Asia/Dubai": { name: "Dubai", flag: "🇦🇪" },
+        "America/Mexico_City": { name: "Mexico City", flag: "🇲🇽" },
+    };
 
-    setInterval(() => {
-        cityTime = moment().tz(cityTimeZone);
-        citiesElement.querySelector(".date").innerHTML = cityTime.format("MMMM Do YYYY");
-        citiesElement.querySelector(".time").innerHTML = cityTime.format("h:mm:ss [<small>]A[</small>]");
-    }, 1000);
+    let cityName, cityFlag;
+
+    if (cityTimeZone === moment.tz.guess()) {
+        let guessedCity = Object.keys(cityDetails).find(zone => zone === cityTimeZone);
+        if (guessedCity) {
+            cityName = cityDetails[guessedCity].name;
+            cityFlag = cityDetails[guessedCity].flag;
+        } else {
+            cityName = "Current Location";
+            cityFlag = "";
+        }
+    } else {
+        cityName = cityDetails[cityTimeZone]?.name || cityTimeZone.replace("_", " ").split("/")[1];
+        cityFlag = cityDetails[cityTimeZone]?.flag || "";
+    }
+
+    let citiesElement = document.querySelector("#cities");
+
+    function updateSelectedCityTime() {
+        let cityTime = moment().tz(cityTimeZone);
+        citiesElement.innerHTML = `
+        <div class="city">
+            <div>
+                <h2>${cityName} ${cityFlag}</h2>
+                <div class="date">${cityTime.format("MMMM Do YYYY")}</div>
+            </div>
+            <div class="time">${cityTime.format("h:mm:ss")} <small>${cityTime.format("A")}</small></div>
+        </div>
+        `;
+    }
+
+    updateSelectedCityTime();
+    cityInterval = setInterval(updateSelectedCityTime, 1000);
 }
 
-function getFlagEmoji(timezone) {
-    const flags = {
-        "Africa/Harare": "🇿🇼",
-        "Europe/London": "🇬🇧",
-        "America/Mexico_City": "🇲🇽",
-        "America/Toronto": "🇨🇦",
-        "Asia/Tokyo": "🇯🇵",
-        "Europe/Paris": "🇫🇷",
-        "Asia/Dubai": "🇦🇪"
-    };
-    return flags[timezone] || "";
+// Show button only if not on the home page
+let backButton = document.getElementById("backToMain");
+if (window.location.pathname === "/index.html" || window.location.pathname === "/") {
+    backButton.style.display = "none";
 }
 
 updateTime();
@@ -78,8 +101,9 @@ setInterval(updateTime, 1000);
 let citiesSelectElement = document.querySelector("#city");
 citiesSelectElement.addEventListener("change", updateCity);
 
-// Redirect back to main page
-let backButton = document.getElementById("backToMain");
+// Button click event to navigate back to the main page
 backButton.addEventListener("click", function() {
-    window.location.href = "index.html"; // Change 'index.html' to your main page's URL
+    window.location.href = "index.html"; // Adjust the URL if necessary
 });
+
+
